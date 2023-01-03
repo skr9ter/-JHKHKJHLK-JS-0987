@@ -8,18 +8,7 @@ _G.chamsEnabled = true
                             LPH_STRENC = function(s) return s end
                             LPH_CRASH = function() while true do end return end
                         end
-                        -- override esp
-
--- local __index; 
--- __index = hookmetamethod(game, "__index", function(self, prop)
---     local checkcaller = checkcaller()
---     if checkcaller then
---         if self:IsA("Player") and prop == "Character" and workspace.Players:FindFirstChild(self.Name) then
---             return workspace.Players[self.Name]
---         end
---     end
---     return __index(self, prop)
--- end)
+                     
                         if not table_flip then
                             function table_flip(t)local tt={};for i,v in pairs(t) do tt[v]=i;end;return tt;end
                             b91enc={'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '^', '_', '`', '{', '|', '}', '~', '"'}; b91enc[0]='A'; b91dec=table_flip(b91enc)
