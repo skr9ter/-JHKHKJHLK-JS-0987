@@ -1,14 +1,28 @@
 _G.chamsEnabled = true
 
-                        if not LPH_OBFUSCATED and not LPH_JIT_ULTRA then
-                            LPH_JIT_ULTRA = function(f) return f end
-                            LPH_JIT_MAX = function(f) return f end
-                            LPH_JIT = function(f) return f end
-                            LPH_ENCSTR = function(s) return s end
-                            LPH_STRENC = function(s) return s end
-                            LPH_CRASH = function() while true do end return end
-                        end
-                     
+                        if not LPH_OBFUSCATED then
+                        LPH_JIT = function(...) return ... end
+                        LPH_JIT_MAX = function(...) return ... end
+                        LPH_JIT_ULTRA = function(...) return ... end
+                        LPH_NO_VIRTUALIZE = function(...) return ... end
+                        LPH_NO_UPVALUES = function(f) return(function(...) return f(...) end) end
+                        LPH_ENCSTR = function(...) return ... end
+                        LPH_HOOK_FIX = function(...) return ... end
+                        LPH_CRASH = function() return print(debug.traceback()) end
+                        end;
+
+                        -- // Overrides
+                        LPH_NO_VIRTUALIZE(function()
+                        local __index; __index = hookmetamethod(game, "__index", function(self, prop)
+                            if checkcaller() then
+                                if self:IsA("Player") and prop == "Character" and workspace.Players:FindFirstChild(self.Name) then
+                                    return workspace.Players[self.Name];
+                                end;
+                            end;
+                            return __index(self, prop);
+                        end);
+                        end)()
+
                         if not table_flip then
                             function table_flip(t)local tt={};for i,v in pairs(t) do tt[v]=i;end;return tt;end
                             b91enc={'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '#', '$', '%', '&', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', ']', '^', '_', '`', '{', '|', '}', '~', '"'}; b91enc[0]='A'; b91dec=table_flip(b91enc)
@@ -460,7 +474,7 @@ _G.chamsEnabled = true
                         
                         -- User Interface
                         local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/killerof9ods/New_Ui_Lib/main/New_Lib_Ui.lua"))({
-                            cheatname = 'Vault',
+                            cheatname = 'Decayed',
                             gamename = 'Universal';
                             fileext = '.json'
                         })
@@ -567,15 +581,15 @@ _G.chamsEnabled = true
                         local FOV_Circle = Framework:Draw("Circle", {Radius = Camera.ViewportSize.X / 2, Position = Camera.ViewportSize / 2, Thickness = 1, Transparency = 1, Color = Color3.new(1, 1, 1)})
                         Flags = Library.flags
                         local Options = Library.options
-                        if not Vault_User then
-                            getgenv().Vault_User = {
+                        if not Decayed_User then
+                            getgenv().Decayed_User = {
                                 UID = 0, 
                                 User = "admin"
                             }
                         end
                         local Utility, Window, Tabs, Sections, Settings = Library.utility, nil, {}, {}, nil; do
                             -- Default Size - UDim2.new(0, 525, 0, 650)
-                            Window = Library.NewWindow({title = ('Vault | Universal | User: %s (UID %s)'):format(Vault_User.User, tostring(Vault_User.UID)), size = UDim2.new(0, 625, 0, 808)})
+                            Window = Library.NewWindow({title = ('Decayed | Universal | User: %s (UID %s)'):format(Decayed_User.User, tostring(Decayed_User.UID)), size = UDim2.new(0, 625, 0, 808)})
                             Tabs = {
                                 Settings = Library:CreateSettingsTab(Window),
                                 Combat = Window:AddTab("Combat"),
@@ -590,7 +604,7 @@ _G.chamsEnabled = true
                                     Silent = Tabs.Combat:AddSection("Silent", 2)
                                 },
                                 Visuals = {
-                                    -- Players = Tabs.Visuals:AddSection("Players", 1),
+                                    -- Players = Tabs.Visuals:AddSection("NIG", 1),
                                     Lighting = Tabs.Visuals:AddSection("Lighting", 2),
                                     Camera = Tabs.Visuals:AddSection("Camera", 1),
                                     Other = Tabs.Visuals:AddSection("Other", 2)
@@ -739,7 +753,7 @@ _G.chamsEnabled = true
                         
                         Sections.Combat.Aimbot:AddSlider({text = "Aim Speed", flag = "aimbotSpeed", enabled = false, min = 0.001, max = 1, value = 1, increment = 0.001})
                         
-                        Sections.Combat.Aimbot:AddList({text = "Part", flag = "aimbotAimTo", tooltip = "Makes the aimbot target a specific body part.", enabled = false, selected = "Head", values = {"Head", "Torso", "Random",}})
+                        Sections.Combat.Aimbot:AddList({text = "Part", flag = "aimbotAimTo", tooltip = "Makes the aimbot target a specific body part.", enabled = false, selected = "Head", values = {"Head", "Torso", "Random"}})
                         
                         Sections.Combat.Aimbot:AddSlider({text = "Field of View", flag = "aimbotFoV", tooltip = "Makes the aimbot only target players who are withing the selected field of view.", enabled = false, min = 0, max = Camera.ViewportSize.X / 2 + 200, value = Camera.ViewportSize.X / 2, callback = function(Value)
                             FOV_Circle.Radius = Value
@@ -765,13 +779,13 @@ _G.chamsEnabled = true
                         
                         Sections.Combat.Aimbot:AddToggle({text = "ForceField Check", flag = "aimbotCheckFF", tooltip = "Makes the aimbot don't target players with forcefield.", enabled = false})
                         
-                        -- Sections.Combat.Aimbot:AddToggle({text = "Transparent Check", flag = "aimbotCheckTransparent", tooltip = "Makes the aimbot don't target transparent players (Most likely admins or invisible).", enabled = false})
+                        Sections.Combat.Aimbot:AddToggle({text = "Transparent Check", flag = "aimbotCheckTransparent", tooltip = "Makes the aimbot don't target transparent players (Most likely admins or invisible).", enabled = false})
                         
                         Sections.Combat.Aimbot:AddToggle({text = "Noclip Check", flag = "aimbotCheckNoclip", tooltip = "Makes the aimbot don't target noclipping players (Most likely admins or spawn protected or dead).", enabled = false})
                         
                         Sections.Combat.Aimbot:AddToggle({text = "Material Check", flag = "aimbotCheckMaterial", tooltip = "Makes the aimbot don't target forcefield material players (Most likely spawn protected).", enabled = false})
                         
-                        -- Sections.Combat.Aimbot:AddToggle({text = "Parent Check", flag = "aimbotCheckParent", tooltip = "Makes the aimbot don't target players that's character parent is not same as localplayer character parent (Most likely dead in some games).", enabled = false})
+                        Sections.Combat.Aimbot:AddToggle({text = "Parent Check", flag = "aimbotCheckParent", tooltip = "Makes the aimbot don't target players that's character parent is not same as localplayer character parent (Most likely dead in some games).", enabled = false})
                         
                         Utility:Connection(Camera:GetPropertyChangedSignal("ViewportSize"), LPH_JIT_ULTRA(function()
                             Options.aimbotFoV.max = Camera.ViewportSize.X / 2 + 200
@@ -883,7 +897,7 @@ _G.chamsEnabled = true
                         end}):AddColor({text = "Visualized Ray Color", flag = "silentVisualizeRaysColor", enabled = false})
                         Options.silentVisualizeRays:AddSlider({flag = "silentVisualizeRaysSize", tooltip = "Visualized ray thickness.", enabled = false, min = 0.001, max = 0.4, increment = 0.001, value = 0.03})
                         
-                        -- Combat - Part Expander
+                        -- -- Combat - Part Expander
                         -- local Old_HumanoidRootPart_Size
                         -- for _, Player in pairs(Players:GetPlayers()) do
                         --     local Character = ESP:Get_Character(Player)
@@ -1725,20 +1739,21 @@ _G.chamsEnabled = true
                         
                         Sections.Miscellaneous.LocalPlayer:AddToggle({text = "Fly Platform Stand", flag = "lPlayerSpeedhackFlyPlatformStand", tooltip = "If disabled then you probably will fly in vehicles. Disabling makes on foot fly unstable.", enabled = false}):SetState(true)
                         
-                        Sections.Miscellaneous.LocalPlayer:AddToggle({text = "Gravity", flag = "lplayerGravity", tooltip = "Changes world gravity.", callback = function(State)
-                            if State then
-                                Workspace.Gravity = Flags.lplayerGravityValue
-                            else
-                                Workspace.Gravity = Old_Gravity
-                            end
-                            Options.lplayerGravityValue.enabled = State
-                            Options.lplayerGravity:UpdateOptions()
-                            Tabs.Miscellaneous:UpdateSections()
-                        end}):AddSlider({flag = "lplayerGravityValue", tooltip = "Gravity value.", enabled = false, min = 0, max = 1000, increment = 0.001, value = Old_Gravity, callback = function(Value)
-                            if Flags.lplayerGravity then
-                                Workspace.Gravity = Value
-                            end
-                        end})
+                        -- Sections.Miscellaneous.LocalPlayer:AddToggle({text = "Gravity", flag = "lplayerGravity", tooltip = "Changes world gravity.", callback = function(State)
+                        --     if State then
+                        --         Workspace.Gravity = Flags.lplayerGravityValue
+                        --     else
+                        --         Workspace.Gravity = Old_Gravity
+                        --     end
+                        --     Options.lplayerGravityValue.enabled = State
+                        --     Options.lplayerGravity:UpdateOptions()
+                        --     Tabs.Miscellaneous:UpdateSections()
+                        -- end}):AddSlider({flag = "l
+                        -- GravityValue", tooltip = "Gravity value.", enabled = false, min = 0, max = 1000, increment = 0.001, value = Old_Gravity, callback = function(Value)
+                        --     if Flags.lplayerGravity then
+                        --         Workspace.Gravity = Value
+                        --     end
+                        -- end})
                         
                         Utility:Connection(Workspace:GetPropertyChangedSignal("Gravity"), LPH_JIT_ULTRA(function()
                             if Flags.lplayerSpeedhack and Flags.lPlayerSpeedhackFly and Flags.lPlayerSpeedhackFlyBind then
@@ -1776,7 +1791,7 @@ _G.chamsEnabled = true
                                 end)
                             end
                         end)})
-                        Options.lplayerNoclip:AddBind({text = "Noclip", flag = "lplayerNoclipBind", tooltip = "Toggles the noclip when this key was pressed. Select BACKSPACE to make noclip always active."})
+                        -- Options.lplayerNoclip:AddBind({text = "Noclip", flag = "lplayerNoclipBind", tooltip = "Toggles the noclip when this key was pressed. Select BACKSPACE to make noclip always active."})
                         
                         -- Sections.Miscellaneous.LocalPlayer:AddToggle({text = "Auto Hop", flag = "lplayerBhop", tooltip = "Makes you jump as soon as you land."})
                         -- Options.lplayerBhop:AddBind({text = "Auto Hop", flag = "lplayerBhopBind", tooltip = "Enables the auto hop only when this key is held. Select BACKSPACE to make auto hop always active.", mode = "hold"})
