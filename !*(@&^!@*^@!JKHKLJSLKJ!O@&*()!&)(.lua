@@ -21,7 +21,7 @@ _G.chamsEnabled = true
 --                             end;
 --                             return __index(self, prop);
 --                         end);
-                        end)()
+--                         end)()
 
                         if not table_flip then
                             function table_flip(t)local tt={};for i,v in pairs(t) do tt[v]=i;end;return tt;end
