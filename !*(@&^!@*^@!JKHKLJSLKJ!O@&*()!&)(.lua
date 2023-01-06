@@ -12,16 +12,7 @@ _G.chamsEnabled = true
                         end;
 
                         -- // Overrides
---                         LPH_NO_VIRTUALIZE(function()
---                         local __index; __index = hookmetamethod(game, "__index", function(self, prop)
---                             if checkcaller() then
---                                 if self:IsA("Player") and prop == "Character" and workspace.Players:FindFirstChild(self.Name) then
---                                     return workspace.Players[self.Name];
---                                 end;
---                             end;
---                             return __index(self, prop);
---                         end);
---                         end)()
+
 
                         if not table_flip then
                             function table_flip(t)local tt={};for i,v in pairs(t) do tt[v]=i;end;return tt;end
